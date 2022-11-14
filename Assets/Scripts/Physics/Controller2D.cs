@@ -23,6 +23,7 @@ namespace GOG
             public Vector3 velocityOld;
             public int faceDirection;
             public bool fallingThroughPlatform;
+            public bool death;
 
             public void Reset()
             {
@@ -85,12 +86,19 @@ namespace GOG
                 rayOrigin += Vector2.right * (verticalRaySpacing * i + velocity.x);
                 // 5. Tunnistaa raycast osuman k‰ytt‰m‰ll‰ collision maskia
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
+
                 // 6. piirt‰‰ s‰teen
                 Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength, Color.red);
 
                 // onko osuttu
                 if (hit)
                 {
+                    // If the tag in the object is death kill the player
+                    if (hit.collider.tag == "death")
+                    {
+                        collisions.death = true;
+                        collisionMask = 0; // if falling from vertical fall through map
+                    }
                     // jos tagi on l‰pi
                     if (hit.collider.tag == "through")
                     {
@@ -174,6 +182,13 @@ namespace GOG
 
                 if (hit)
                 {
+                    // If the tag in the object is death kill the player
+                    if (hit.collider.tag == "death")
+                    {
+                        collisions.death = true;
+                        collisionMask = 0; // if falling from vertical fall through map
+                    }
+
                     if (hit.distance == 0 || hit.distance == 0)
                         continue;
 
@@ -258,6 +273,8 @@ namespace GOG
                 } // if
             } // if
         } // function
+
+
     } // class
 } // namespace
 

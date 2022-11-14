@@ -3,232 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
-namespace WilhelmAndFriends {
+
+namespace GOG {
+
 
     public class GameManager : MonoBehaviour
     {
-/*
-        private static GameManager _instance;
 
-        public static GameManager Instance {
-
-            get
-            {
-                if(_instance == null)
-                {
-                    Debug.Log("GameManager Instance is null!");
-
-
-                }
-
-               return _instance;
-            }
-
-         }
-
-
-
-        public delegate int CheckpointDelegate();
-
-        public static event CheckpointDelegate CheckPointEvent;
-
-
-        public delegate void CameraDelegate(GameObject player);
-
-        public static event CameraDelegate CameraToPositionEvent;
-
-
-
-        public delegate void PlayerSetupDelegate(GameObject player);
-
-        public static event PlayerSetupDelegate GetPlayerInstanceEvent;
-
-
-       //make an event that sends the newly created player as parameter to
-       // the listeners of the event
-       //so to the camera manager.
-
-
-
-
-        [SerializeField] Transform[] CheckPoints;
-        private int currentCheckPoint;
-        // SoundManager soundManager;
-        [SerializeField] GameObject wilhelm;
+        // public variables here
         GameObject player;
-        private int playerLives;
-        public bool isDead;
-        public int health;
-        // Wilhelm wilhelmScript;
-        Vector2 checkPointPosition;
-        public bool isGameOver;
-        public bool hasEatenObject;
-        // Start is called before the first frame update'
+        public GameObject globalLight;
+        GameObject environment;
+        new GameObject camera;
+
+        // Death logic here
+        public int respawn;
+        
+       // signleton pattern here
+        public static GameManager Instance { get; private set; }
+
+        // !!!!!!!!!!!!!! if is enemy dont put health system here !!!!!!!!!!!!!!!
+        // Add health system to a player of 100 units
+
+        // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // MOVE THIS LINE TO ENEMY SCRIPTS RATHER THAN DOING IT HERE
+        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        public UnitHealth playerHealth = new UnitHealth(100, 100);
+
+
         private void Awake()
         {
-            //wilhelm = GameObject.Find("Wilhelm");
-            _instance = this;
+            // If there is an instance, and it's not me, delete myself.
+            if (Instance != null && Instance != this)
+                Destroy(this);
+            else
+                Instance = this;
 
-                
 
-            //wilhelmScript = wilhelm.GetComponent<Wilhelm>();
-            //wilhelmScript.enabled = true;
+            InstantiateEverything();
 
-        }
-        void Start()
+            // save game objects if it needs editing
+            environment = GameObject.Find("environment");
+            camera = GameObject.Find("cm-camera");
+            player = GameObject.Find("player");
+        } // function
+
+        private void Update()
         {
-            soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
-            //soundManager.Play("Music");
-
-      
-
-
-        }
-
-        private void OnEnable()
-        {
-            Init();
-            Wilhelm.OnDeathEvent += TakePlayerToCheckPoint;
-       
-        }
-
-
-
-        // Update is called once per frame
-        void Update()
-        {
-
-            IsPlayerDead();
-          
-
-        }
-
-
-        private void IsPlayerDead()
-        {
-     
-            if (isDead == true) {
-                //Debug.Log("is player dead ." + isDead);
-                Wilhelm.OnDeathEvent -= TakePlayerToCheckPoint;
-                isDead = false;
-            }
-            if(isDead == false)
+            if (playerHealth.Health == 50)
             {
-                Wilhelm.OnDeathEvent += TakePlayerToCheckPoint;
-
             }
-
         }
 
 
-        public void CheckPointUpdate()
+        private void InstantiateEverything()
         {
-            if(CheckPointEvent !=null)
-            {
-
-                currentCheckPoint = CheckPointEvent();
-                //Debug.Log("CurrentCheckPoint is:" + currentCheckPoint);
-
-                //Debug.Log(" current check" + currentCheckPoint);
-
-
-            }
-
+            // Make the light come alive only after starting the game
+           Instantiate(globalLight, transform.position, Quaternion.identity);
         }
 
-
-
-
-
-
-
-        private void Init()
-        {
-            currentCheckPoint = 1;
-            hasEatenObject = false;
-        }
-
-
-
-        private void InstantiatePlayer()
-        {
-            checkPointPosition = CheckPoints[currentCheckPoint-1].transform.position;
-
-            if (!player) { 
-            player = Instantiate(wilhelm, checkPointPosition, wilhelm.transform.rotation);
-
-            }
-
-
-            if (player != null)
-            {
-                //CameraToPositionEvent(player);
-                //Event Invokes an event.
-                //ResetPlayer(player);
-
-            }
-
-
-        }
-
-        public void ResetPlayer()
-        {
-
-            //UI lives needs updating
-            //PLayer health to full
-            //position to first checkpoint of the level
-            //Current checkpoint need to be set back to 1;
-            currentCheckPoint = 1;
-            UImanager.Instance.UpdateLives2(health);
-
-
-            //TakePlayerToCheckPoint();
-            //do reseting
-            // also call TakePlayerToCheckPoint;
-        }
-
-
-        //When playerHealth == 0
-        //Listen the player GameOver event.
-        // if it is fired: 
-        //isGameOver = true
-
-
-
-        private Vector3 TakePlayerToCheckPoint()
-        {
-     
-            //if (wilhelmScript.Health == 1)
-            //{
-            //    checkPointPosition = CheckPoints[0].position;
-
-            //}
-
-            //if(wilhelmScript.Health > 1){
-               
-
-            //}
-
-            checkPointPosition = CheckPoints[currentCheckPoint - 1].transform.position;
-
-
-            //Debug.Log("Take player to checkPoint: " + checkPointPosition);
-            return checkPointPosition;
-        }
-
-
-    
-
-        public void StateOfHealth(int playerHealth)
-        {
-
-            health = playerHealth;
-
-        }
-
-  
-
-*/
-
-    }
-}
+    } //class
+} // namespace
